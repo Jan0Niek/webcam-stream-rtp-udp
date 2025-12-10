@@ -11,8 +11,11 @@ frame = None
 
 while True:
     data, addr = sock.recvfrom(1024)
-    for _ in range(10):
+    for _ in range(100):
         _, frame = cap.read()
-        cv2.imshow("Stream", frame)
+        _, buffer = cv2.imencode(".jpg", frame)
+        buffer = buffer.tobytes()
+        bufferSize = len(buffer)
+        print(bufferSize)
     print(data.decode())
     sock.sendto("bam!".encode(), addr)
