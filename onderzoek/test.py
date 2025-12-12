@@ -1,10 +1,11 @@
 import cv2
-# import time
+import time
 
+start, end = 0, 0
 cap = cv2.VideoCapture(0)
-for _ in range(10):
-    r, frame = cap.read()
-    # _, buffer = cv2.imencode(".png", frame)
-    # cv2.imshow("bam!", buffer)
-    cv2.imshow("Stream", frame)
-    cv2.waitKey(1)  # waarom?!?!?
+for i in range(95):
+    start = time.perf_counter()
+    _, frame = cap.read()
+    _, b = cv2.imencode(".jpg", frame, (cv2.IMWRITE_JPEG_QUALITY, i + 1))
+    end = time.perf_counter()
+    print(f"{i}: {end - start}, {len(b)}")
