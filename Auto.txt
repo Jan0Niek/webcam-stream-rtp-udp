@@ -1,0 +1,11 @@
+client:
+als een bepaalde kant naar voren moet, stuur dan elke seconde een signaal
+dat die kant naar voren moet. als je niet meer naar voren moet gaan stuur
+dan een signaal om daarmee te stoppen.
+
+auto:
+als de auto een naar voren signaal ontvangt, ga dan naar voren voor een
+seconde, stop daarna. als de auto een stop signaal ontvang, stop dan
+onmiddelijk.
+
+465 allerlaagst

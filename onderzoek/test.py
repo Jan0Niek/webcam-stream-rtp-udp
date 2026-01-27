@@ -1,11 +1,12 @@
 import cv2
-import time
+import t
 
-start, end = 0, 0
+start = 0
 cap = cv2.VideoCapture(0)
-for i in range(95):
-    start = time.perf_counter()
+while cv2.waitKey(1) != ord('q'):
+    start = t.perf_counter()
     _, frame = cap.read()
-    _, b = cv2.imencode(".jpg", frame, (cv2.IMWRITE_JPEG_QUALITY, i + 1))
-    end = time.perf_counter()
-    print(f"{i}: {end - start}, {len(b)}")
+    # _, b = cv2.imencode(".webp", frame, (cv2.IMWRITE_WEBP_QUALITY, 50))
+    _, b = cv2.imencode(".jpg", frame, (cv2.IMWRITE_JPEG_QUALITY, 50))
+    print(len(b), t.perf_counter() - start)
+    cv2.imshow("dikke", cv2.imdecode(b, cv2.IMREAD_COLOR))
