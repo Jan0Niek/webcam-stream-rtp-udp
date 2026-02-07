@@ -8,7 +8,7 @@ import cv2
 running = True
 #       lv  la  rv  ra
 PINS = [27, 17, 22, 23]
-counters = [0, 0, 0, 0]
+counters = [0.0] * 4
 port = 5000
 
 for pin in PINS:
@@ -34,20 +34,19 @@ def receiver():
     """ontvangt alle requests en zet counter en GPIO voor de wielen"""
     global running, counters
     while running:
-        buffer, _ = sock.recvfrom(1)
-        buffer = buffer.decode()
-        if buffer == "q":
+        buffer, _ = sock.recvfrom(1)  # we hebben maar 1 byte nodig
+        buffer = int.from_bytes(buffer)
+        if (buffer << 5) & 1 == 1:
             running = False
             return
-        if len(buffer) < 3:
-            print(f"buffer te kort: {buffer}")
-            return
-        index = 0 if buffer[0] == "l" else 2
-        index += 1 if buffer[1] == "b" else 0
-        stop = buffer[2] == "s"
-        GPIO.output(PINS[index],
-                    GPIO.LOW if stop else GPIO.HIGH)
-        counters[i] = 0 if stop else 1.1  # TODO: check of dit allemaal klopt
+
+        for i in range(4):  # 4, ofwel len(counter)
+            is_on = (buffer >> i) & 1 == 1  # checkt of de bit bij i 1 is
+            if is_on and counters[i] <= 0:
+                GPIO.output(PINS[i], GPIO.HIGH)
+            elif not is_on and counters[i] > 0:
+                GPIO.output(PINS[i], GPIO.LOW)
+            counters[i] = 1.1 if is_on else 0
 
 
 def check_batery():
@@ -60,8 +59,8 @@ def check_batery():
             print(line)  # TODO: dit moet nog daadwerkelijk de pi uitzetten
 
 
-threads = [threading.Thread(target=x)
-           for x in [send_cam, receiver, check_batery]]
+threads = [threading.Thread(target=f)
+           for f in [send_cam, receiver, check_batery]]
 for thread in threads:
     thread.start()
 
@@ -79,7 +78,8 @@ dt = 0
 while True:
     now = time.time()
     dt = now - then
-    for i in range(len(counters)):
+    then = now
+    for i in range(4):  # 4, ofwel len(counters)
         if counters[i] > 0:
             counters[i] -= dt
             if counters[i] < 0:

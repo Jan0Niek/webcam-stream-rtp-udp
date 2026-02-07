@@ -1,13 +1,4 @@
-import RPi.GPIO as GPIO
-import time
+import keyboard
 
-pins = [11, 13, 15, 16]
-
-GPIO.setmode(GPIO.BCM)
-
-for pin in pins:
-    GPIO.setup(pin, GPIO.OUT)
-    GPIO.output(pin, GPIO.HIGH)
-    time.sleep(0.3)
-    GPIO.output(pin, GPIO.LOW)
-    time.sleep(0.3)
+while True:
+    sum(1 << i if keyboard.is_pressed(c) else 0 for i, c in enumerate("qaed"))
