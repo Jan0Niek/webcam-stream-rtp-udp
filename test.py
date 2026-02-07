@@ -1,23 +1,13 @@
-import threading as th
+import RPi.GPIO as GPIO
+import time
 
-i = 0
+pins = [11, 13, 15, 16]
 
+GPIO.setmode(GPIO.BCM)
 
-def foo():
-    global i
-    i = 1
-    print(i)
-
-
-def bar():
-    i = 2
-    print(i)
-
-
-t1 = th.Thread(target=foo)
-t2 = th.Thread(target=bar)
-t1.start()
-t1.join()
-t2.start()
-t2.join()
-print(i)
+for pin in pins:
+    GPIO.setup(pin, GPIO.OUT)
+    GPIO.output(pin, GPIO.HIGH)
+    time.sleep(0.3)
+    GPIO.output(pin, GPIO.LOW)
+    time.sleep(0.3)
