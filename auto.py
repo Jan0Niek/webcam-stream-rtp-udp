@@ -6,6 +6,11 @@ import socket
 import cv2
 
 running = True
+
+#lv= linksvoorwaarts
+#la= linksachterwaarts
+#rv= rechtsvoorwaarts
+#ra= rechtsachterwaarts
 #       lv  la  rv  ra
 PINS = [27, 17, 22, 23]
 counters = [0.0] * 4
@@ -13,7 +18,7 @@ port = 5000
 
 for pin in PINS:
     GPIO.setup(pin, GPIO.OUT)
-sock: socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind("0.0.0.0", port)
 _, addr = sock.recvfrom(100)
 
