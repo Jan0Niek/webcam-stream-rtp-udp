@@ -1,4 +1,5 @@
 import keyboard
 
 while True:
-    sum(1 << i if keyboard.is_pressed(c) else 0 for i, c in enumerate("qaed"))
+    print(sum(1 << i for i, c in enumerate("qaed")
+              if keyboard.is_pressed(c)).to_bytes())

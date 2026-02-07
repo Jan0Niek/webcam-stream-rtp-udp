@@ -17,7 +17,8 @@ def send_input():
     """verstuurt de inputs als 4 bits in één byte naar de auto"""
     inputs = 0
     while True:
-        inputs = sum(1 << i if keyboard.is_pressed(keyBtn) else 0 for i, keyBtn in enumerate("qaed"))
+        inputs = sum(1 << i for i, keyBtn in enumerate("qaed")
+                     if keyboard.is_pressed(keyBtn))
         buffer = inputs.to_bytes()
         sock.sendto(buffer, addr)
 
@@ -29,8 +30,6 @@ def receive_footage():
         buffer = buffer.decode()
         cv2.imdecode(en hier dan webp als typetje)
         cv2.imshow("dikke", cv2.imdecode(webp?!, cv2.IMREAD_COLOR))
-
-
 
 
 threads = [threading.Thread(target=x)
