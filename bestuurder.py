@@ -14,6 +14,7 @@ sock.sendto("zinloze data".encode(), addr)
 
 def send_input():
     """verstuurt de inputs als 4 bits in één byte naar de auto"""
+    # TODO: verstuur ook (in aparte functie) de (PWM)snelheid waarmee je PER WIEL de snelheid bepalen kan
     inputs = 0
     while True:
         inputs = sum(1 << i for i, keyBtn in enumerate("qaed")
@@ -28,6 +29,8 @@ def receive_footage():
         buffer, _ = sock.recvfrom(1024)
         buffer = buffer.decode()
         cv2.imshow("accuPercentage hier?", cv2.imdecode(buffer, cv2.IMREAD_COLOR))
+
+# TODO: maak aparte functie (op aparte socketverbinding en -poort?) die accupercentage ontvangt
 
 
 threads = [threading.Thread(target=x)
