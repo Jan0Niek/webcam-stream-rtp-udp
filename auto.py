@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO
+import pigpio
 import time
 import serial
 import threading
@@ -12,12 +13,15 @@ running = True
 # rv= rechtsvoorwaarts
 # ra= rechtsachterwaarts
 #       lv  la  rv  ra
-PINS = [27, 17, 22, 23]
+PINS = [27, 17, 22, 23]  # gpio nummers, niet board nummers
 counters = [0.0] * 4
 port = 5000
 
-for pin in PINS:
-    GPIO.setup(pin, GPIO.OUT)
+pi = pigpio.pi()
+pi.hardware_PWM(12, 2000, 750000)
+pi.hardware_PWM(13, 2000, 750000)
+
+GPIO.setup(PINS, GPIO.OUT)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind("0.0.0.0", port)
 _, addr = sock.recvfrom(100)
@@ -81,7 +85,7 @@ for thread in threads:
 then = time.time()
 now = then
 dt = 0
-while True:
+while running:
     now = time.time()
     dt = now - then
     then = now
@@ -90,3 +94,10 @@ while True:
             counters[i] -= dt
             if counters[i] < 0:
                 GPIO.output(PINS[i], GPIO.LOW)
+
+for thread in threads:
+    thread.join()
+
+GPIO.cleanup(PINS)
+
+# TODO: shutdown pi misschien en cleanup van pigpio gpio pins denk ik
