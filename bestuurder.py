@@ -8,7 +8,6 @@ port = 5000
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 addr = socket.gethostbyname('autootje')
 
-
 sock.bind(addr, port)
 sock.sendto("zinloze data".encode(), addr)
 
@@ -26,10 +25,9 @@ def send_input():
 def receive_footage():
     """ontvangt camerabeelden en pleurt ze in een cv2 display window ter weergave"""
     while True:
-        buffer, _ = sock.recvfrom(1)
+        buffer, _ = sock.recvfrom(1024)
         buffer = buffer.decode()
-        cv2.imdecode(en hier dan webp als typetje)
-        cv2.imshow("dikke", cv2.imdecode(webp?!, cv2.IMREAD_COLOR))
+        cv2.imshow("accuPercentage hier?", cv2.imdecode(buffer, cv2.IMREAD_COLOR))
 
 
 threads = [threading.Thread(target=x)
