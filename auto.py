@@ -7,10 +7,10 @@ import cv2
 
 running = True
 
-#lv= linksvoorwaarts
-#la= linksachterwaarts
-#rv= rechtsvoorwaarts
-#ra= rechtsachterwaarts
+# lv= linksvoorwaarts
+# la= linksachterwaarts
+# rv= rechtsvoorwaarts
+# ra= rechtsachterwaarts
 #       lv  la  rv  ra
 PINS = [27, 17, 22, 23]
 counters = [0.0] * 4
@@ -25,7 +25,7 @@ _, addr = sock.recvfrom(100)
 
 def send_cam():
     """verstuurt camerabeelden naar de client"""
-    global running
+    global running, sock
     cap = cv2.VideoCapture(0)
     while running:
         _, frame = cap.read()
@@ -36,12 +36,12 @@ def send_cam():
 
 
 def receiver():
-    """ontvangt alle requests en zet counter en GPIO voor de wielen"""
+    """ontvangt alle requests en zet counters en GPIO voor de wielen"""
     global running, counters
     while running:
         buffer, _ = sock.recvfrom(1)  # we hebben maar 1 byte nodig
         buffer = int.from_bytes(buffer)
-        if (buffer << 5) & 1 == 1:
+        if (buffer >> 5) & 1 == 1:
             running = False
             return
 
@@ -56,9 +56,10 @@ def receiver():
 
 def check_batery():
     """leest usb en sluit computer af als de accu bijna leeg is"""
+    global running
     ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
     ser.reset_input_buffer()
-    while True:
+    while running:
         if ser.in_waiting > 0:
             line = ser.readline().decode('utf-8').rstrip()
             print(line)  # TODO: dit moet nog daadwerkelijk de pi uitzetten
@@ -72,10 +73,10 @@ for thread in threads:
 # vanaf hier de main thread:
 # hier worden counters geteld en wielen uitgezet na genoeg tijd
 
-lEFT_FORWARD = 27
-LEFT_BACKWARD = 17
-RIGHT_FORWARD = 22
-RIGHT_BACKWARD = 23
+# lEFT_FORWARD = 27
+# LEFT_BACKWARD = 17
+# RIGHT_FORWARD = 22
+# RIGHT_BACKWARD = 23  # deze worden nooit gebruikt, misschien ooit verwijderen
 
 then = time.time()
 now = then
@@ -88,4 +89,4 @@ while True:
         if counters[i] > 0:
             counters[i] -= dt
             if counters[i] < 0:
-                GPIO.output(PINS[i], GPIO.LOW)  # TODO: hier ook effe checken
+                GPIO.output(PINS[i], GPIO.LOW)
