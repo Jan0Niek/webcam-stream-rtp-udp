@@ -15,7 +15,7 @@ running = True
 
 def send_input():
     """verstuurt de inputs als 4 bits in één byte naar de auto"""
-    # TODO: verstuur ook (in aparte functie) de (PWM-dutycycle)snelheid waarmee je PER WIEL de snelheid bepalen kan
+    # TODO: verstuur ook (in aparte functie) de (PWM-dutycycle)snelheid waarmee je PER WIEL de snelheid bepalen kan 
     inputs = 0
     while running:
         inputs = sum(1 << i for i, keyBtn in enumerate("qaed")

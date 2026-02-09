@@ -71,7 +71,7 @@ def check_batery():
             print(line) 
             if int(line) <= 1:
                 call('poweroff')
-                call('shutdown now')
+                call('shutdown now') #TODO GPIO pins opschonen?
 
 
 threads = [threading.Thread(target=f)
@@ -105,4 +105,4 @@ for thread in threads:
 
 GPIO.cleanup(PINS)
 
-# TODO: shutdown pi misschien en cleanup van pigpio gpio pins denk ik
+# TODO: cleanup van pigpio gpio pins denk ik
