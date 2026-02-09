@@ -47,6 +47,7 @@ def receiver():
         buffer = int.from_bytes(buffer)
         if (buffer >> 5) & 1 == 1:
             running = False
+            sock.close()
             return
 
         for i in range(4):  # 4, ofwel len(counter)
