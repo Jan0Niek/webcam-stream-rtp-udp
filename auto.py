@@ -23,7 +23,7 @@ pi.hardware_PWM(13, 2000, 750000)
 
 GPIO.setup(PINS, GPIO.OUT)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.bind("0.0.0.0", port)
+sock.bind(("0.0.0.0", port))
 _, addr = sock.recvfrom(100)
 
 
