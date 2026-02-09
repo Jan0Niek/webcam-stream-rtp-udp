@@ -5,6 +5,7 @@ import serial
 import threading
 import socket
 import cv2
+from subprocess import call
 
 running = True
 
@@ -67,7 +68,10 @@ def check_batery():
     while running:
         if ser.in_waiting > 0:
             line = ser.readline().decode('utf-8').rstrip()
-            print(line)  # TODO: dit moet nog daadwerkelijk de pi uitzetten
+            print(line) 
+            if int(line) <= 1:
+                call('poweroff')
+                call('shutdown now')
 
 
 threads = [threading.Thread(target=f)
