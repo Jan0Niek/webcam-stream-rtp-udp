@@ -9,8 +9,8 @@ port = 5000
 batPort = port + 1  # zelfde comment als in auto.py zeg maar
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-# addr = (socket.gethostbyname('autootje'), port)
-addr = ("127.0.0.1", port)
+addr = (socket.gethostbyname('autootje'), port)
+# addr = ("127.0.0.1", port)
 print(addr)
 
 # sock.bind((addr, port))
