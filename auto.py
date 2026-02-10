@@ -22,7 +22,12 @@ batPort = port + 1  # vreselijk, 2 configurable ports is beter
 # pi.hardware_PWM(12, 2000, 750000)
 # pi.hardware_PWM(13, 2000, 750000)
 
-GPIO.setup(PINS, GPIO.OUT)
+GPIO.setmode(GPIO.BCM)
+for pin in PINS:
+    GPIO.setup(PINS, GPIO.OUT)
+    GPIO.output(pin, GPIO.HIGH)
+    time.sleep(0.5)
+    GPIO.output(pin, GPIO.LOW)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("0.0.0.0", port))
 _, addr = sock.recvfrom(100)
