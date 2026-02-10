@@ -1,11 +1,10 @@
 import RPi.GPIO as GPIO
-import pigpio
+# import pigpio
 import time
 import serial
 import threading
 import socket
 import cv2
-from subprocess import call
 
 running = True
 
@@ -16,20 +15,22 @@ running = True
 #       lv  la  rv  ra
 PINS = [27, 17, 22, 23]  # gpio nummers, niet board nummers
 counters = [0.0] * 4
-port = 5000 
-batPort = port + 1 #vreselijk, 2 configurable ports is beter
+port = 5000
+batPort = port + 1  # vreselijk, 2 configurable ports is beter
 
-pi = pigpio.pi()
-pi.hardware_PWM(12, 2000, 750000)
-pi.hardware_PWM(13, 2000, 750000)
+# pi = pigpio.pi()
+# pi.hardware_PWM(12, 2000, 750000)
+# pi.hardware_PWM(13, 2000, 750000)
 
 GPIO.setup(PINS, GPIO.OUT)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("0.0.0.0", port))
 _, addr = sock.recvfrom(100)
+print("dingen gaan starten")
 
-batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #nog een socketverbinding op een aparte port omdat wij niksnutten zijn haha
-batSock.bind((addr, batPort)) 
+batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # nog een socketverbinding op een aparte port omdat wij niksnutten zijn haha
+# batSock.bind(("0.0.0.0", batPort))  # zou niet nodig moeten zijn
+
 
 def send_cam():
     """verstuurt camerabeelden naar de client"""
@@ -68,23 +69,23 @@ def check_batery():
     global running
     ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
     ser.reset_input_buffer()
-    time.sleep(10) #conserve a little power maybe?
+    time.sleep(10)  # conserve a little power maybe?
     while running:
         if ser.in_waiting > 0:
             line = ser.readline().decode('utf-8').rstrip()
-            print(line) 
+            print(line)  # moet eigenlijk weg, gaat dan sneller
             # batteryPercentage = line
-            batSock.sendto(int(line).to_bytes(), addr) 
+            batSock.sendto(int(line).to_bytes(), addr)
             if int(line) <= 1:
                 GPIO.cleanup(PINS)
-                pi.stop()
+                # pi.stop()
                 running = False
-                call('poweroff')
-                call('shutdown now')
+                # call('poweroff')
+                # call('shutdown now')
 
 
 threads = [threading.Thread(target=f)
-           for f in [send_cam, receiver, check_batery]]
+           for f in [send_cam, receiver]]
 for thread in threads:
     thread.start()
 
@@ -113,4 +114,4 @@ for thread in threads:
     thread.join()
 
 GPIO.cleanup(PINS)
-pi.stop()
+# pi.stop()
