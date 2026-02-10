@@ -36,8 +36,7 @@ def receive_footage():
     while cv2.waitKey(1) != ord('l'):
         buffer, _ = sock.recvfrom(1024)
         buffer = buffer.decode()
-        cv2.imshow("accuPercentage hier?",
-                   cv2.imdecode(buffer, cv2.IMREAD_COLOR))
+        cv2.imshow(str(batPercentage), cv2.imdecode(buffer, cv2.IMREAD_COLOR))
     sock.sendto(b'\x10', addr)  # stuurt de quit-bit
     sock.close()
     running = False
