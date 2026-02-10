@@ -57,6 +57,7 @@ def receiver():
         buffer = int.from_bytes(buffer)
         if (buffer >> 5) & 1 == 1:
             running = False
+            time.sleep(1)
             sock.close()
             return
 
