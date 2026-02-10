@@ -30,7 +30,7 @@ _, addr = sock.recvfrom(100)
 
 def send_cam():
     """verstuurt camerabeelden naar de client"""
-    global running, sock
+    global sock
     cap = cv2.VideoCapture(0)
     while running:
         _, frame = cap.read()
@@ -68,10 +68,13 @@ def check_batery():
     while running:
         if ser.in_waiting > 0:
             line = ser.readline().decode('utf-8').rstrip()
-            print(line) 
+            print(line)
             if int(line) <= 1:
+                GPIO.cleanup(PINS)
+                pi.stop()
+                running = False
                 call('poweroff')
-                call('shutdown now') #TODO GPIO pins opschonen?
+                call('shutdown now')
 
 
 threads = [threading.Thread(target=f)
@@ -104,5 +107,4 @@ for thread in threads:
     thread.join()
 
 GPIO.cleanup(PINS)
-
-# TODO: cleanup van pigpio gpio pins denk ik
+pi.stop()

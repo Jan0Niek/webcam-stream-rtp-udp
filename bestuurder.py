@@ -13,6 +13,7 @@ sock.sendto("zinloze data".encode(), addr)
 
 running = True
 
+
 def send_input():
     """verstuurt de inputs als 4 bits in één byte naar de auto"""
     # TODO: verstuur ook (in aparte functie) de (PWM-dutycycle)snelheid waarmee je PER WIEL de snelheid bepalen kan 
@@ -31,8 +32,9 @@ def receive_footage():
     while cv2.waitKey(1) != ord('l'):
         buffer, _ = sock.recvfrom(1024)
         buffer = buffer.decode()
-        cv2.imshow("accuPercentage hier?", cv2.imdecode(buffer, cv2.IMREAD_COLOR))
-    sock.sendto(b'\x10', addr) # stuurt de quit-bit
+        cv2.imshow("accuPercentage hier?",
+                   cv2.imdecode(buffer, cv2.IMREAD_COLOR))
+    sock.sendto(b'\x10', addr)  # stuurt de quit-bit
     sock.close()
     running = False
 
