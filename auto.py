@@ -16,7 +16,8 @@ running = True
 #       lv  la  rv  ra
 PINS = [27, 17, 22, 23]  # gpio nummers, niet board nummers
 counters = [0.0] * 4
-port = 5000
+port = 5000 
+batPort = port + 1 #vreselijk, 2 configurable ports is beter
 
 pi = pigpio.pi()
 pi.hardware_PWM(12, 2000, 750000)
@@ -27,6 +28,8 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("0.0.0.0", port))
 _, addr = sock.recvfrom(100)
 
+batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #nog een socketverbinding op een aparte port omdat wij niksnutten zijn haha
+batSock.bind((addr, batPort)) 
 
 def send_cam():
     """verstuurt camerabeelden naar de client"""
@@ -61,14 +64,17 @@ def receiver():
 
 
 def check_batery():
-    """leest usb en sluit computer af als de accu bijna leeg is"""
+    """leest usb en sluit computer af als de accu bijna leeg is EN VERSTUURT HET NU?!"""
     global running
     ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
     ser.reset_input_buffer()
+    time.sleep(10) #conserve a little power maybe?
     while running:
         if ser.in_waiting > 0:
             line = ser.readline().decode('utf-8').rstrip()
             print(line) 
+            # batteryPercentage = line
+            batSock.sendto(int(line).to_bytes(), addr) 
             if int(line) <= 1:
                 call('poweroff')
                 call('shutdown now') #TODO GPIO pins opschonen?
