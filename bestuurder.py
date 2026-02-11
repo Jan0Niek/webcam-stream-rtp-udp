@@ -57,7 +57,7 @@ def receive_batPercentage():
     global batPercentage
     while running:
         buffer, _ = batSock.recvfrom(1024)
-        batPercentage = buffer.decode()
+        batPercentage = buffer.from_bytes()
         print(batPercentage)
 
 
