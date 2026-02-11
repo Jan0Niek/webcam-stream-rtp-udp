@@ -18,7 +18,7 @@ print(addr)
 sock.sendto("zinloze data".encode(), addr)
 
 batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-batSock.bind(batAdrr)
+# batSock.bind(batAdrr)
 # batSock.sendto("zelfde soort data".encode(), batAdrr)
 
 running = True
