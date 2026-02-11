@@ -50,7 +50,7 @@ def send_cam():
     while running:
         _, frame = cap.read()
         _, buffer = cv2.imencode(".webp", frame,
-                                 (cv2.IMWRITE_WEBP_QUALITY, 70))
+                                 (cv2.IMWRITE_WEBP_QUALITY, 10))
         buffer = buffer.tobytes()
         sock.sendto(buffer, addr)
 
