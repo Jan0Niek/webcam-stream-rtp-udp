@@ -33,8 +33,13 @@ sock.bind(("0.0.0.0", port))
 _, addr = sock.recvfrom(1024) # dit wacht dus net zolang tot het een signaal ontvangt (signaal kleiner dan 1024 bits)
 print("dingen gaan starten")
 
-# batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # nog een socketverbinding op een aparte port omdat wij niksnutten zijn haha
-# batSock.bind(("0.0.0.0", batPort))  # zou niet nodig moeten zijn
+batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # nog een socketverbinding op een aparte port omdat wij niksnutten zijn haha
+
+batAddr = list(addr)
+batAddr[1] = batPort
+batAddr = tuple(batAddr)
+
+batSock.bind(batAddr)  # zou niet nodig moeten zijn
 
 
 def send_cam():
@@ -70,7 +75,7 @@ def receiver():
             counters[i] = 1.1 if is_on else 0
 
 
-def check_batery():
+def check_battery():
     """leest usb en sluit computer af als de accu bijna leeg is EN VERSTUURT HET NU?!"""
     global running
     ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1) # the arduino is in USB0, not AMC0 sooo yeah
@@ -80,9 +85,7 @@ def check_batery():
             line = ser.readline().rstrip()
             # print(line)  # moet eigenlijk weg, gaat dan sneller
             # batteryPercentage = line
-            # addr2 = list(addr)
-            # addr2[1] = batPort
-            # batSock.sendto(int(line).to_bytes(), tuple(addr2)) # send battery percentage to the controlling party waarom engels opeens huh?!
+            batSock.sendto(int(line).to_bytes(), batAddr) # send battery percentage to the controlling party waarom engels opeens huh?!
             if int(line) <= 5: # under 5% (~9,1V) it should stop (and perhaps shut the Pi down?)
                 GPIO.cleanup(PINS)
                 # pi.stop()
@@ -92,7 +95,7 @@ def check_batery():
 
 
 threads = [threading.Thread(target=f)
-           for f in [send_cam, receiver]]
+           for f in [send_cam, receiver, check_battery]]
 for thread in threads:
     thread.start()
 

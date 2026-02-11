@@ -10,14 +10,16 @@ batPort = port + 1  # zelfde comment als in auto.py zeg maar
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 addr = (socket.gethostbyname('autootje'), port)
+batAdrr = (socket.gethostbyname('autootje'), batPort)
 # addr = ("127.0.0.1", port)
 print(addr)
 
 # sock.bind((addr, port))
 sock.sendto("zinloze data".encode(), addr)
 
-# batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 # batSock.bind(("0.0.0.0", batPort))
+# batSock.sendto("zelfde soort data".encode(), batAdrr)
 
 running = True
 
@@ -45,7 +47,7 @@ def receive_footage():
         # buffer = buffer.decode()
         frame = np.frombuffer(buffer, dtype=np.uint8)
         frame = frame.reshape(frame.shape[0], 1)
-        cv2.imshow(str(7123123),cv2.imdecode(frame, cv2.IMREAD_COLOR))
+        cv2.imshow(str(batPercentage),cv2.imdecode(frame, cv2.IMREAD_COLOR))
     running = False
     cv2.destroyAllWindows()
 
@@ -60,7 +62,7 @@ def receive_batPercentage():
 
 
 threads = [threading.Thread(target=x)
-           for x in [send_input, receive_footage]]
+           for x in [send_input, receive_footage, receive_batPercentage]]
 for thread in threads:
     thread.start()
 
