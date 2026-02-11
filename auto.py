@@ -86,7 +86,7 @@ def check_battery():
             line = ser.readline().rstrip()
             # print(line)  # moet eigenlijk weg, gaat dan sneller
             # batteryPercentage = line
-            batSock.sendto(int(line).to_bytes(), batAddr) # send battery percentage to the controlling party waarom engels opeens huh?!
+            batSock.sendto(int(line).to_bytes(signed=True), batAddr) # send battery percentage to the controlling party waarom engels opeens huh?!
             if int(line) <= 5: # under 5% (~9,1V) it should stop (and perhaps shut the Pi down?)
                 GPIO.cleanup(PINS)
                 # pi.stop()
