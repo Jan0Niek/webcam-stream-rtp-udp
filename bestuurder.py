@@ -16,14 +16,14 @@ print(addr)
 # sock.bind((addr, port))
 sock.sendto("zinloze data".encode(), addr)
 
-batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-batSock.bind(("0.0.0.0", batPort))
+# batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+# batSock.bind(("0.0.0.0", batPort))
 
 running = True
 
 batPercentage = 999999
 def send_input():
-    """verstuurt de inputs als 4 bits in één byte naar de auto"""
+    """verstuurt de inputs als 4 (+ 1) bits in één byte naar de auto"""
     # TODO: verstuur ook (in aparte functie) de (PWM-dutycycle)snelheid waarmee je PER WIEL de snelheid bepalen kan
     inputs = 0
     while running:
@@ -45,7 +45,7 @@ def receive_footage():
         # buffer = buffer.decode()
         frame = np.frombuffer(buffer, dtype=np.uint8)
         frame = frame.reshape(frame.shape[0], 1)
-        cv2.imshow(str(batPercentage),cv2.imdecode(frame, cv2.IMREAD_COLOR))
+        cv2.imshow(str(7123123),cv2.imdecode(frame, cv2.IMREAD_COLOR))
     running = False
     cv2.destroyAllWindows()
 
@@ -60,7 +60,7 @@ def receive_batPercentage():
 
 
 threads = [threading.Thread(target=x)
-           for x in [send_input, receive_footage, receive_batPercentage]]
+           for x in [send_input, receive_footage]]
 for thread in threads:
     thread.start()
 

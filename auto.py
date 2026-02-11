@@ -33,7 +33,7 @@ sock.bind(("0.0.0.0", port))
 _, addr = sock.recvfrom(1024) # dit wacht dus net zolang tot het een signaal ontvangt (signaal kleiner dan 1024 bits)
 print("dingen gaan starten")
 
-batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # nog een socketverbinding op een aparte port omdat wij niksnutten zijn haha
+# batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # nog een socketverbinding op een aparte port omdat wij niksnutten zijn haha
 # batSock.bind(("0.0.0.0", batPort))  # zou niet nodig moeten zijn
 
 
@@ -80,9 +80,9 @@ def check_batery():
             line = ser.readline().rstrip()
             # print(line)  # moet eigenlijk weg, gaat dan sneller
             # batteryPercentage = line
-            addr2 = list(addr)
-            addr2[1] = batPort
-            batSock.sendto(int(line).to_bytes(), tuple(addr2)) # send battery percentage to the controlling party waarom engels opeens huh?!
+            # addr2 = list(addr)
+            # addr2[1] = batPort
+            # batSock.sendto(int(line).to_bytes(), tuple(addr2)) # send battery percentage to the controlling party waarom engels opeens huh?!
             if int(line) <= 5: # under 5% (~9,1V) it should stop (and perhaps shut the Pi down?)
                 GPIO.cleanup(PINS)
                 # pi.stop()
