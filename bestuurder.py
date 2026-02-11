@@ -21,7 +21,7 @@ batSock.bind(("0.0.0.0", batPort))
 
 running = True
 
-
+batPercentage = 999999
 def send_input():
     """verstuurt de inputs als 4 bits in één byte naar de auto"""
     # TODO: verstuur ook (in aparte functie) de (PWM-dutycycle)snelheid waarmee je PER WIEL de snelheid bepalen kan
