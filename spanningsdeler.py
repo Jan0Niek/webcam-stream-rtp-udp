@@ -3,5 +3,5 @@ ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
 ser.reset_input_buffer()
 while True:
     if ser.in_waiting > 0:
-        line = ser.readline().decode().rstrip()
-        print(line)  # moet eigenlijk weg, gaat dan sneller
+        line = ser.readline()
+        print(line)  
