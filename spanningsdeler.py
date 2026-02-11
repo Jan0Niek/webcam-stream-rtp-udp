@@ -4,4 +4,4 @@ ser.reset_input_buffer()
 while True:
     if ser.in_waiting > 0:
         line = ser.readline().rstrip()
-        print(line)  
+        print(int(line))  
