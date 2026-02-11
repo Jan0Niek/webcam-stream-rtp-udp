@@ -38,8 +38,9 @@ batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # nog een socketverb
 batAddr = list(addr)
 batAddr[1] = batPort
 batAddr = tuple(batAddr)
+print(batAddr)
 
-batSock.bind(batAddr)  # zou niet nodig moeten zijn
+# batSock.bind(batAddr)  # zou niet nodig moeten zijn
 
 
 def send_cam():
