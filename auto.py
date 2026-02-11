@@ -73,16 +73,15 @@ def receiver():
 def check_batery():
     """leest usb en sluit computer af als de accu bijna leeg is EN VERSTUURT HET NU?!"""
     global running
-    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+    ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1) # the arduino is in USB0, not AMC0 sooo yeah
     ser.reset_input_buffer()
-    time.sleep(10)  # conserve a little power maybe?
     while running:
         if ser.in_waiting > 0:
-            line = ser.readline().decode('utf-8').rstrip()
-            print(line)  # moet eigenlijk weg, gaat dan sneller
+            line = ser.readline().decode().rstrip()
+            # print(line)  # moet eigenlijk weg, gaat dan sneller
             # batteryPercentage = line
             batSock.sendto(int(line).to_bytes(), addr)
-            if int(line) <= 1:
+            if int(line) <= 5: # under 5V it should stop (and perhaps shut the Pi down?)
                 GPIO.cleanup(PINS)
                 # pi.stop()
                 running = False

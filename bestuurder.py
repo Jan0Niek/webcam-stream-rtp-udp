@@ -45,8 +45,7 @@ def receive_footage():
         # buffer = buffer.decode()
         frame = np.frombuffer(buffer, dtype=np.uint8)
         frame = frame.reshape(frame.shape[0], 1)
-        cv2.imshow("accuPercentage hier?",
-                   cv2.imdecode(frame, cv2.IMREAD_COLOR))
+        cv2.imshow(str(batPercentage),cv2.imdecode(frame, cv2.IMREAD_COLOR))
     running = False
     cv2.destroyAllWindows()
 
