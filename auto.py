@@ -1,11 +1,10 @@
 import RPi.GPIO as GPIO
-import pigpio
+# import pigpio
 import time
 import serial
 import threading
 import socket
 import cv2
-from subprocess import call
 
 running = True
 
@@ -17,20 +16,30 @@ running = True
 PINS = [27, 17, 22, 23]  # gpio nummers, niet board nummers
 counters = [0.0] * 4
 port = 5000
+batPort = port + 1  # vreselijk, 2 configurable ports is beter
 
-pi = pigpio.pi()
-pi.hardware_PWM(12, 2000, 750000)
-pi.hardware_PWM(13, 2000, 750000)
+# pi = pigpio.pi()
+# pi.hardware_PWM(12, 2000, 750000)
+# pi.hardware_PWM(13, 2000, 750000)
 
-GPIO.setup(PINS, GPIO.OUT)
+GPIO.setmode(GPIO.BCM)
+for pin in PINS:
+    GPIO.setup(PINS, GPIO.OUT)
+    GPIO.output(pin, GPIO.HIGH)
+    time.sleep(0.5)
+    GPIO.output(pin, GPIO.LOW)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("0.0.0.0", port))
-_, addr = sock.recvfrom(1024) # het wacht totdat het iets ontvangt van iemand, dan verder
+_, addr = sock.recvfrom(100)
+print("dingen gaan starten")
+
+batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # nog een socketverbinding op een aparte port omdat wij niksnutten zijn haha
+# batSock.bind(("0.0.0.0", batPort))  # zou niet nodig moeten zijn
 
 
 def send_cam():
     """verstuurt camerabeelden naar de client"""
-    global running, sock
+    global sock
     cap = cv2.VideoCapture(0)
     while running:
         _, frame = cap.read()
@@ -48,6 +57,7 @@ def receiver():
         buffer = int.from_bytes(buffer)
         if (buffer >> 5) & 1 == 1:
             running = False
+            time.sleep(1)
             sock.close()
             return
 
@@ -61,21 +71,27 @@ def receiver():
 
 
 def check_batery():
-    """leest usb en sluit computer af als de accu bijna leeg is"""
+    """leest usb en sluit computer af als de accu bijna leeg is EN VERSTUURT HET NU?!"""
     global running
     ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
     ser.reset_input_buffer()
+    time.sleep(10)  # conserve a little power maybe?
     while running:
         if ser.in_waiting > 0:
             line = ser.readline().decode('utf-8').rstrip()
-            print(line) 
+            print(line)  # moet eigenlijk weg, gaat dan sneller
+            # batteryPercentage = line
+            batSock.sendto(int(line).to_bytes(), addr)
             if int(line) <= 1:
-                call('poweroff')
-                call('shutdown now') #TODO GPIO pins opschonen?
+                GPIO.cleanup(PINS)
+                # pi.stop()
+                running = False
+                # call('poweroff')
+                # call('shutdown now')
 
 
 threads = [threading.Thread(target=f)
-           for f in [send_cam, receiver, check_batery]]
+           for f in [send_cam, receiver]]
 for thread in threads:
     thread.start()
 
@@ -104,5 +120,4 @@ for thread in threads:
     thread.join()
 
 GPIO.cleanup(PINS)
-
-# TODO: cleanup van pigpio gpio pins denk ik
+# pi.stop()
