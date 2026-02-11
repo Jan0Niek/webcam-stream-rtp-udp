@@ -30,7 +30,7 @@ for pin in PINS:
     GPIO.output(pin, GPIO.LOW)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("0.0.0.0", port))
-_, addr = sock.recvfrom(100)
+_, addr = sock.recvfrom(1024) # dit wacht dus net zolang tot het een signaal ontvangt (signaal kleiner dan 1024 bits)
 print("dingen gaan starten")
 
 batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # nog een socketverbinding op een aparte port omdat wij niksnutten zijn haha
