@@ -56,6 +56,7 @@ def receive_batPercentage():
     while running:
         buffer, _ = batSock.recvfrom(1024)
         batPercentage = buffer.decode()
+        print(batPercentage)
 
 
 threads = [threading.Thread(target=x)
