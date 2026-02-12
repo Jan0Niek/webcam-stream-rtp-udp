@@ -52,7 +52,7 @@ def send_cam():
     while running:
         _, frame = cap.read()
         _, buffer = cv2.imencode(".jpg", frame,
-                                 (cv2.IMWRITE_WEBP_QUALITY, 50))
+                                 (cv2.IMWRITE_WEBP_QUALITY, 20)) # we zouden voor alle zekerheid echt splitsen moeten implementeren!!!
         buffer = buffer.tobytes()
         sock.sendto(buffer, addr)
 
