@@ -30,7 +30,7 @@ for pin in PINS:
     GPIO.output(pin, GPIO.LOW)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("0.0.0.0", port))
-_, addr = sock.recvfrom(1024) # dit wacht dus net zolang tot het een signaal ontvangt (signaal kleiner dan 1024 bits)
+_, addr = sock.recvfrom(1024)  # dit wacht dus net zolang tot het een signaal ontvangt (signaal kleiner dan 1024 bits)
 print("dingen gaan starten")
 
 batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # nog een socketverbinding op een aparte port omdat wij niksnutten zijn haha
@@ -48,11 +48,11 @@ def send_cam():
     global sock
     cap = cv2.VideoCapture(0)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 960)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 540) #zou sowieso in een .config bestand moeten, niet hardcoded
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 540)  # zou sowieso in een .config bestand moeten, niet hardcoded
     while running:
         _, frame = cap.read()
         _, buffer = cv2.imencode(".jpg", frame,
-                                 (cv2.IMWRITE_JPEG_QUALITY, 20)) # we zouden voor alle zekerheid echt splitsen moeten implementeren!!!
+                                 (cv2.IMWRITE_JPEG_QUALITY, 20))  # we zouden voor alle zekerheid echt splitsen moeten implementeren!!!
         buffer = buffer.tobytes()
         sock.sendto(buffer, addr)
 
@@ -81,7 +81,7 @@ def receiver():
 def check_battery():
     """leest usb en sluit computer af als de accu bijna leeg is EN VERSTUURT HET NU?!"""
     global running
-    ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1) # the arduino is in USB0, not AMC0 sooo yeah
+    ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)  # the arduino is in USB0, not AMC0 sooo yeah
     ser.reset_input_buffer()
     while running:
         if ser.in_waiting > 0:
@@ -89,9 +89,9 @@ def check_battery():
             # print(line)  # moet eigenlijk weg, gaat dan sneller
             batteryPercentage = int(line)
             # print(batteryPercentage, batteryPercentage.bit_length()+7)
-            batSock.sendto(batteryPercentage.to_bytes(), batAddr) # send battery percentage to the controlling party waarom engels opeens huh?!
+            batSock.sendto(batteryPercentage.to_bytes(), batAddr)  # send battery percentage to the controlling party waarom engels opeens huh?!
             print("ist's gelungen?")
-            if batteryPercentage <= 5: # under 5% (~9,1V) it should stop (and perhaps shut the Pi down?)
+            if batteryPercentage <= 5:  # under 5% (~9,1V) it should stop (and perhaps shut the Pi down?)
                 GPIO.cleanup(PINS)
                 # pi.stop()
                 running = False
