@@ -80,22 +80,18 @@ def check_battery():
     """leest usb en sluit computer af als de accu bijna leeg is EN VERSTUURT HET NU?!"""
     global running
     ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)  # the arduino is in USB0, not AMC0 sooo yeah
+    ser.reset_input_buffer()
     while running:
-        try:
-            time.sleep(2)
-            ser.reset_input_buffer()
-            if ser.in_waiting > 0:
-                line = ser.readline().rstrip()
-                batteryPercentage = int(line)
-                batSock.sendto(batteryPercentage.to_bytes(), batAddr)  # send battery percentage to the controlling party waarom engels opeens huh?!
-                if batteryPercentage <= 5:  # under 5% (~9,1V) it should stop (and perhaps shut the Pi down?)
-                    GPIO.cleanup(PINS)
-                    # pi.stop()
-                    running = False
-                    # call('poweroff')
-                    # call('shutdown now')
-        except:
-            pass
+        if ser.in_waiting > 0:
+            line = ser.readline().rstrip()
+            batteryPercentage = int(line)
+            batSock.sendto(batteryPercentage.to_bytes(), batAddr)  # send battery percentage to the controlling party waarom engels opeens huh?!
+            if batteryPercentage <= 5:  # under 5% (~9,1V) it should stop (and perhaps shut the Pi down?)
+                GPIO.cleanup(PINS)
+                # pi.stop()
+                running = False
+                # call('poweroff')
+                # call('shutdown now')
 
 
 threads = [threading.Thread(target=f)
