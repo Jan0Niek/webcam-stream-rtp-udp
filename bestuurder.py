@@ -14,12 +14,10 @@ batAdrr = ("0.0.0.0", batPort)
 # addr = ("127.0.0.1", port)
 print(addr)
 
-# sock.bind((addr, port))
 sock.sendto("zinloze data".encode(), addr)
 
 batSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 batSock.bind(batAdrr)
-# batSock.sendto("zelfde soort data".encode(), batAdrr)
 
 running = True
 batPercentage = 999999
@@ -48,7 +46,7 @@ def receive_footage():
         # buffer = buffer.decode()
         frame = np.frombuffer(buffer, dtype=np.uint8)
         frame = frame.reshape(frame.shape[0], 1)
-        cv2.imshow(str(batPercentage), cv2.imdecode(frame, cv2.IMREAD_COLOR))
+        cv2.imshow("gaming", cv2.imdecode(frame, cv2.IMREAD_COLOR))
     running = False
     cv2.destroyAllWindows()
 
@@ -59,7 +57,7 @@ def receive_batPercentage():
     while running:
         buffer, _ = batSock.recvfrom(1024)
         batPercentage = int.from_bytes(buffer)
-        print(batPercentage)
+        print(batPercentage, end="\r")
 
 
 threads = [threading.Thread(target=x)
