@@ -47,6 +47,8 @@ def send_cam():
     """verstuurt camerabeelden naar de client"""
     global sock
     cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
     while running:
         _, frame = cap.read()
         _, buffer = cv2.imencode(".webp", frame,
