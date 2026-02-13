@@ -18,9 +18,9 @@ counters = [0.0] * 4
 port = 5000
 batPort = port + 1  # vreselijk, 2 configurable ports is beter
 
-# pi = pigpio.pi()
-# pi.hardware_PWM(12, 2000, 750000)
-# pi.hardware_PWM(13, 2000, 750000)  # TODO: dit ooit implementeren
+pi = pigpio.pi()
+pi.hardware_PWM(12, 2000, 750000)
+pi.hardware_PWM(13, 2000, 750000)  # TODO: dit ooit implementeren
 
 GPIO.setmode(GPIO.BCM)
 for pin in PINS:
@@ -88,7 +88,7 @@ def check_battery():
             batSock.sendto(batteryPercentage.to_bytes(), batAddr)  # send battery percentage to the controlling party waarom engels opeens huh?!
             if batteryPercentage <= 5:  # under 5% (~9,1V) it should stop (and perhaps shut the Pi down?)
                 GPIO.cleanup(PINS)
-                # pi.stop()
+                pi.stop()
                 running = False
                 # call('poweroff')
                 # call('shutdown now')
@@ -119,4 +119,4 @@ for thread in threads:
     thread.join()
 
 GPIO.cleanup(PINS)
-# pi.stop()
+pi.stop()
