@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-# import pigpio
+import pigpio
 import time
 import serial
 import threading
